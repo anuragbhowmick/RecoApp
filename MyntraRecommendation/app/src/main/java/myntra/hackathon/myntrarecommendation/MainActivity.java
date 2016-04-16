@@ -24,12 +24,13 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+
+import myntra.hackathon.myntrarecommendation.facebook.FacebookListActivity;
 
 public class MainActivity extends AppCompatActivity {
 
 
-    Button clickPhoto, chooseFile, uploadPhoto;
+    Button clickPhoto, chooseFile, recoButton, findFbFriends;
     private Uri fileUri;
     String picturePath;
     Uri selectedImage;
@@ -40,7 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private int PICK_IMAGE_REQUEST = 1;
     private int CLICK_IMAGE_REQUEST = 2;
     //public static final String UPLOAD_URL = "http://simplifiedcoding.16mb.com/ImageUpload/upload.php";
-    public static final String UPLOAD_URL = "http://10.0.12.113:8080/products/Image";
+
+//    public static final String UPLOAD_URL = "http://10.0.13.106:8080/products/Image"; // risabh
+
 
     public static final String UPLOAD_KEY = "image";
     public static final String TAG = "MY MESSAGE";
@@ -57,10 +60,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        findFbFriends = (Button) findViewById(R.id.findFBFriends);
         clickPhoto = (Button) findViewById(R.id.clickphoto);
         imageView = (ImageView) findViewById(R.id.imageView);
         chooseFile = (Button) findViewById(R.id.filechooser);
+        recoButton = (Button) findViewById(R.id.uploadphoto);
 
+
+        findFbFriends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,FacebookListActivity.class);
+                startActivity(intent);
+            }
+        });
 
         clickPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,8 +89,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        uploadPhoto = (Button) findViewById(R.id.uploadphoto);
-        uploadPhoto.setOnClickListener(new View.OnClickListener() {
+        recoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 uploadImage();
@@ -85,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         });
         handleIntents();
     }
+
 
     private void handleIntents() {
         Log.d("AB","handleIntents called ");
@@ -121,32 +134,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-
-    // upload ima
-/*    private void upload() {
-
-        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-        photoPickerIntent.setType("image*//*");
-        startActivityForResult(photoPickerIntent, 1);
-
-//
-//        // Image location URL
-//        Log.e("path", "----------------" + picturePath);
-//
-//        // Image
-//        Bitmap bm = BitmapFactory.decodeFile(picturePath);
-//        ByteArrayOutputStream bao = new ByteArrayOutputStream();
-//        bm.compress(Bitmap.CompressFormat.JPEG, 90, bao);
-//        byte[] ba = bao.toByteArray();
-//        //ba1 = Base64.encodeBytes(ba);
-//
-//        Log.e("base64", "-----" + ba1);
-//
-//        // Upload image to server
-//        new uploadToServer().execute();
-
-    }*/
 
     private void clickpic() {
         // Check Camera
@@ -211,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
         return encodedImage;
     }
 
+
     class UploadImage extends AsyncTask<Bitmap,Void,String>{
 
         ProgressDialog loading;
@@ -219,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            loading = ProgressDialog.show(MainActivity.this, "Uploading Image", "Please wait...",true,true);
+            loading = ProgressDialog.show(MainActivity.this, "Getting Recommendations", "Please wait...",true,true);
         }
 
         @Override
@@ -254,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
                 jImageArray.put("http://assets.myntassets.com/h_240,q_95,w_180/v1/image/style/properties/857754/Nike-Women-Tops_1_8d9edba02822501353d1d26d5aa5c495.jpg");
                 jImageArray.put("http://assets.myntassets.com/h_240,q_95,w_180/v1/assets/images/1110561/2016/1/23/11453546089711-Nike-Navy-As-Hyperspeed-Training-Jacket-6961453546089000-1.jpg");
 
-                recomObject.put(Constants.RECOM_IMAGES_KEY, jImageArray);
+                recomObject.put(Constants.RECOM_RAW_IMAGE_KEY, jImageArray);
                 return recomObject.toString();
             } catch (Exception e) {
 
@@ -271,17 +259,12 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 JSONObject imageObject = new JSONObject();
-                imageObject.put("image", uploadImage);
-                result = rh.sendPostRequest(UPLOAD_URL,imageObject.toString());
+                imageObject.put(Constants.RECOM_RAW_IMAGE_KEY, uploadImage);
+                result = rh.sendPostRequest(Constants.UPLOAD_URL,imageObject.toString());
                 Log.d("AB","doInBackground . response " + result);
             } catch(Exception e) {
                 result = "Exception";
             }
-
-//            HashMap<String,String> data = new HashMap<>();
-//            data.put(UPLOAD_KEY, uploadImage);
-//            //String result = "uploaded";
-//            String result = rh.sendPostRequest(UPLOAD_URL,data);
 
             return result;
         }

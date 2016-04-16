@@ -12,6 +12,12 @@
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:text="Get recommendations for friends"
+        android:id="@+id/findFBFriends" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:text="Click photo"
         android:id="@+id/clickphoto" />
 

@@ -31,13 +31,15 @@
 
         <activity
             android:name=".GridViewActivity"
-            android:parentActivityName=".MainActivity"
             android:label="@string/recommendations">
         </activity>
 
         <activity android:name=".DetailsActivity"
             android:theme="@style/Transparent"
             />
+        <activity android:name=".facebook.FacebookListActivity"
+            android:label="@string/fb_friends"/>
+
     </application>
 
 </manifest>

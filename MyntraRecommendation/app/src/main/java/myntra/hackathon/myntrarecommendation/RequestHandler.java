@@ -46,7 +46,7 @@ public class RequestHandler {
                                   String payload) {
 
         URL url;
-        String response = "";
+        String response = null;
         try {
             url = new URL(requestURL);
 
