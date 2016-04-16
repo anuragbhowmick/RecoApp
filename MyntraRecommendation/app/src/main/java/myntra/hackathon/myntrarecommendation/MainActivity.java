@@ -2,12 +2,14 @@ package myntra.hackathon.myntrarecommendation;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -18,12 +20,22 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import myntra.hackathon.myntrarecommendation.facebook.FacebookListActivity;
 
@@ -54,12 +66,13 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap bitmap;
     private static final Bitmap.CompressFormat DEFAULT_COMPRESS_FORMAT = Bitmap.CompressFormat.JPEG;
     private static final int DEFAULT_COMPRESS_QUALITY = 70;
+    CallbackManager callbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
-
         findFbFriends = (Button) findViewById(R.id.findFBFriends);
         clickPhoto = (Button) findViewById(R.id.clickphoto);
         imageView = (ImageView) findViewById(R.id.imageView);
@@ -70,6 +83,10 @@ public class MainActivity extends AppCompatActivity {
         findFbFriends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(AccessToken.getCurrentAccessToken() == null) {
+                    Toast.makeText(getApplication(), "You need to login to Facebook first", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 Intent intent = new Intent(MainActivity.this,FacebookListActivity.class);
                 startActivity(intent);
             }
@@ -95,10 +112,38 @@ public class MainActivity extends AppCompatActivity {
                 uploadImage();
             }
         });
+        initializeFb();
         handleIntents();
     }
 
+    public void initializeFb() {
+        callbackManager = CallbackManager.Factory.create();
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile","user_friends","user_photos","user_likes"));
+        LoginButton loginButton  = (LoginButton) findViewById(R.id.login_button);
+//        loginButton.setReadPermissions("user_friends");
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d("AB","access token " + loginResult.getAccessToken());
+                Log.d("AB","curent access token " +  AccessToken.getCurrentAccessToken().getToken());
+                // App code
+            }
 
+            @Override
+
+            public void onCancel() {
+                Log.d("AB","callbakc onCancel ");
+
+                // App code
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                Log.d("AB","callbakc onError ");
+            }
+        });
+
+    }
     private void handleIntents() {
         Log.d("AB","handleIntents called ");
         // Get intent, action and MIME type
@@ -168,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        callbackManager.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Log.d("AB",data.getDataString());
             filePath = data.getData();

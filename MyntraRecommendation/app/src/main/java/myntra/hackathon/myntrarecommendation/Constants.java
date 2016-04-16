@@ -12,6 +12,7 @@ public class Constants {
     public static final String REQUEST_RAW_IMAGE_KEY = "image";
     public static final String REQUEST_IMAGEURLS_KEY = "imageUrls";
     public static final String REQUEST_RAW_MULTIPLE_IMAGES_KEY = "multiImages";
+    public static final String REQUEST_GENDER = "gender";
 
 
     public static final String FB_FRIENDS = "fbfriends";
