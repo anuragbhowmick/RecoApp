@@ -21,6 +21,8 @@ public class DetailsActivity extends ActionBarActivity {
     private static final int ANIM_DURATION = 600;
     private TextView titleTextView;
     private ImageView imageView;
+    private TextView priceTextView;
+
 
     private int mLeftDelta;
     private int mTopDelta;
@@ -54,13 +56,18 @@ public class DetailsActivity extends ActionBarActivity {
 
         String title = bundle.getString("title");
         String image = bundle.getString("image");
+        String price = bundle.getString("price");
 
         //initialize and set the image description
         titleTextView = (TextView) findViewById(R.id.title);
         titleTextView.setText(Html.fromHtml(title));
 
+        priceTextView = (TextView) findViewById(R.id.price);
+        priceTextView.setText(Html.fromHtml(price));
+
         //Set image url
         imageView = (ImageView) findViewById(R.id.grid_item_image);
+
         Picasso.with(this).load(image).into(imageView);
 
         //Set the background color to black

@@ -3,6 +3,15 @@ package myntra.hackathon.myntrarecommendation;
 public class GridItem {
     private String image;
     private String title;
+    private String price;
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
 
     public GridItem() {
         super();

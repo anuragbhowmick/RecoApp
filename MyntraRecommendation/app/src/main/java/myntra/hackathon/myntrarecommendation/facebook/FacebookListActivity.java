@@ -130,7 +130,8 @@ public class FacebookListActivity extends ListActivity {
                     imageUrlArray.put(image);
                 }
                 imageObject.put(Constants.REQUEST_IMAGEURLS_KEY, imageUrlArray);
-                imageObject.put(Constants.REQUEST_GENDER, user.getGender());
+                String gender = (user.getGender().compareToIgnoreCase("male")==0) ? "men":"women";
+                imageObject.put(Constants.REQUEST_GENDER, gender);
                 response = rh.sendPostRequest(Constants.UPLOAD_URL, imageObject.toString());
                 Log.d("AB", "doInBackground . response " + response);
             } catch (Throwable t) {

@@ -68,6 +68,7 @@ public class GridViewActivity extends ActionBarActivity {
                         putExtra("width", imageView.getWidth()).
                         putExtra("height", imageView.getHeight()).
                         putExtra("title", item.getTitle()).
+                        putExtra("price",item.getPrice()).
                         putExtra("image", item.getImage());
 
                 //Start details activity
@@ -120,9 +121,11 @@ public class GridViewActivity extends ActionBarActivity {
                 JSONObject recoObject = jArray.getJSONObject(i);
                 String name = recoObject.getString("productName");
                 String image = recoObject.getString("imageUrl");
+                String price = recoObject.getString("discountedPrice");
                 item = new GridItem();
                 item.setTitle(name);
                 item.setImage(image);
+                item.setPrice(price);
                 mGridData.add(item);
             }
             mGridAdapter.setGridData(mGridData);

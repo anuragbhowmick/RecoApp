@@ -3,6 +3,7 @@ package myntra.hackathon.myntrarecommendation;
 import android.app.Activity;
 import android.content.Context;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,8 @@ public class GridViewAdapter extends ArrayAdapter<GridItem> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d("AB", "GridViewAdapter.getView " + position);
+
         View row = convertView;
         ViewHolder holder;
 
@@ -50,6 +53,7 @@ public class GridViewAdapter extends ArrayAdapter<GridItem> {
             holder = new ViewHolder();
             holder.titleTextView = (TextView) row.findViewById(R.id.grid_item_title);
             holder.imageView = (ImageView) row.findViewById(R.id.grid_item_image);
+            holder.priceView = (TextView)row.findViewById(R.id.grid_item_price);
             row.setTag(holder);
         } else {
             holder = (ViewHolder) row.getTag();
@@ -57,7 +61,7 @@ public class GridViewAdapter extends ArrayAdapter<GridItem> {
 
         GridItem item = mGridData.get(position);
         holder.titleTextView.setText(Html.fromHtml(item.getTitle()));
-
+        holder.priceView.setText(Html.fromHtml(item.getPrice()));
         Picasso.with(mContext).load(item.getImage()).into(holder.imageView);
         return row;
     }
@@ -65,5 +69,6 @@ public class GridViewAdapter extends ArrayAdapter<GridItem> {
     static class ViewHolder {
         TextView titleTextView;
         ImageView imageView;
+        TextView priceView;
     }
 }
